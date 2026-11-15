@@ -1,98 +1,128 @@
 # XL SATU - Website Provider Internet Rumah & Hiburan
 
-Website landing page responsif untuk promosi dan pendaftaran layanan internet **XL SATU** (Fibre & FWA), dibangun menggunakan **Laravel 12**, **Tailwind CSS**, dan siap dijalankan dengan **Docker**.
+Website landing page responsif untuk promosi dan pendaftaran layanan internet **XL SATU** (Fibre & FWA), dibangun menggunakan **Laravel 12**, **Tailwind CSS**, dan siap dijalankan dengan **Docker** di balik **Reverse Proxy Nginx VPS**.
 
 ---
 
-## 🚀 Fitur Website
-- **Hero & Promo Section**: Headline promo dan banner informasi produk.
-- **Paket Internet WiFi Rumah**: Slider interaktif (Swiper) paket Starter 20 Mbps hingga Extreme 1 Gbps lengkap dengan badge Mbps interaktif.
-- **Paket Wireless FWA 5G**: Pilihan paket Fixed Wireless Access bulanan & paket hemat multi-bulan.
-- **Produk Lainnya**: TV Kabel, Streaming Apps, X1 Smart Box, Telepon Rumah, CCTV Smart Home, dan Wi-Fi Extender.
-- **Video Experience**: Highlight video portrait untuk edukasi pelanggan.
-- **Keunggulan Layanan**: 6 kartu keunggulan fitur jaringan modern.
-- **Testimoni Pelanggan**: Review pelanggan pengguna XL SATU.
-- **Coverage Checker Terintegrasi**:
-  - Auto-detect lokasi via browser GPS (Geolocation API + OpenStreetMap reverse geocoding).
-  - Validasi area coverage & mini map preview.
-  - Kirim lead otomatis ke Google Sheet & redirect WhatsApp admin dengan format pesan rapi.
-- **Floating WhatsApp Button**: Akses cepat konsultasi langsung via WhatsApp.
-- **Mobile Responsive**: Tampilan optimal di desktop, tablet, dan smartphone.
+## 🚀 Arsitektur Reverse Proxy
+
+```
+[ Pengunjung ]
+      │
+      ▼ (Port 80 / 443 SSL)
+[ Nginx VPS Host ]  (Reverse Proxy / SSL Certbot)
+      │
+      ▼ (proxy_pass http://127.0.0.1:8080)
+[ Nginx Container (xlhome_webserver) ]
+      │
+      ▼ (fastcgi app:9000)
+[ PHP-FPM Container (xlhome_app) ]
+```
+
+Dengan arsitektur ini:
+- Container Docker hanya mengikat ke `127.0.0.1:8080` (tidak terbuka langsung ke publik, aman).
+- Nginx utama di VPS mengurus domain, firewall, dan sertifikat SSL (Certbot / Let's Encrypt).
+- Laravel dipercayakan membaca header proxy (`trustProxies: *`) sehingga URL, aset, dan skema HTTPS otomatis valid.
 
 ---
 
-## 🐳 Cara Menjalankan Menggunakan Docker di VPS
+## 🐳 Panduan Deployment di VPS
 
-### 1. Clone Repository
+### 1. Clone Repository ke VPS
 ```bash
 git clone https://github.com/GiskaSaputra/xlhomejogja.git
 cd xlhomejogja
 ```
 
-### 2. Konfigurasi Environment
-Salin file `.env.example` ke `.env`:
+### 2. Siapkan File `.env`
+Salin template konfigurasi:
 ```bash
 cp .env.example .env
 ```
-
-Sesuaikan port jika diperlukan di `.env`:
+Isi konfigurasi di `.env` (sesuaikan domain kamu):
 ```env
-APP_PORT=80
-APP_URL=http://your-vps-ip-or-domain
+APP_NAME="XL SATU"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://domainanda.com
+APP_PORT=8080
+APP_BIND_IP=127.0.0.1
 ```
 
 ### 3. Jalankan Docker Compose
-Jalankan perintah build dan start container di background:
 ```bash
 docker compose up -d --build
 ```
+Container akan melakukan:
+- Build multi-stage aset frontend (Vite & Tailwind CSS)
+- Setup PHP-FPM 8.3 & ekstensi lengkap
+- Generate `APP_KEY` dan optimize cache produksi
+- Menjalankan Nginx container di `127.0.0.1:8080`
 
-Container akan otomatis:
-- Menginstall dependensi composer yang dibutuhkan
-- Generate `APP_KEY` jika belum ada
-- Mengatur permission folder `storage` & `bootstrap/cache`
-- Menjalankan Nginx pada port yang ditentukan (default `8000` atau `80`)
-
-### 4. Cek Status Container
+Periksa status container:
 ```bash
 docker compose ps
-docker compose logs -f
 ```
 
-### 5. Mematikan Container
+---
+
+### 4. Konfigurasi Nginx di VPS Host (Reverse Proxy)
+
+Buat file konfigurasi di VPS (misal: `/etc/nginx/sites-available/xlhomejogja`):
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name domainanda.com www.domainanda.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
+
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}
+```
+
+Aktifkan konfigurasi dan reload Nginx VPS:
 ```bash
-docker compose down
+sudo ln -s /etc/nginx/sites-available/xlhomejogja /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+*(Opsional: pasang SSL gratis via Certbot)*
+```bash
+sudo certbot --nginx -d domainanda.com -d www.domainanda.com
 ```
 
 ---
 
-## 💻 Menjalankan Secara Lokal (Non-Docker)
+## 🛠️ Perintah Berguna di VPS
 
-1. Pastikan **PHP >= 8.2**, **Composer**, dan **Node.js** sudah terinstall.
-2. Install PHP dependencies:
-   ```bash
-   composer install
-   ```
-3. Install JavaScript dependencies & build assets:
-   ```bash
-   npm install
-   npm run build
-   ```
-4. Salin environment dan generate key:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-5. Jalankan development server:
-   ```bash
-   php artisan serve
-   ```
-6. Buka browser di `http://127.0.0.1:8000`.
-
----
-
-## 🛠️ Tech Stack
-- **Framework**: Laravel 12
-- **CSS Framework**: Tailwind CSS v4
-- **Slider**: Swiper.js
-- **Containerization**: Docker & Docker Compose (PHP 8.3 FPM + Nginx Alpine)
+- **Lihat log container**:
+  ```bash
+  docker compose logs -f
+  ```
+- **Restart container**:
+  ```bash
+  docker compose restart
+  ```
+- **Hentikan container**:
+  ```bash
+  docker compose down
+  ```
+- **Update ke versi terbaru dari Git**:
+  ```bash
+  git pull origin main
+  docker compose up -d --build
+  ```
