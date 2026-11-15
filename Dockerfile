@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # --- Stage 2: PHP Application ---
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 WORKDIR /var/www
 
 # Install system dependencies
@@ -38,7 +38,7 @@ COPY --from=frontend /app/public/build /var/www/public/build
 RUN chmod +x /var/www/docker/entrypoint.sh
 
 # Run composer install for production
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
