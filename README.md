@@ -47,7 +47,23 @@ APP_DEBUG=false
 APP_URL=https://domainanda.com
 APP_PORT=8080
 APP_BIND_IP=127.0.0.1
+
+# Kredensial CMS Poster (Tanpa Database)
+ADMIN_USER=admin
+ADMIN_PASSWORD=adminxlhome
 ```
+
+---
+
+## 🎨 Panel CMS Pengelola Poster (Tanpa Database)
+
+Aplikasi dilengkapi panel CMS ringan untuk mengganti poster dan banner di landing page tanpa perlu koneksi database:
+- **URL Login**: `https://domainanda.com/admin/login`
+- **Kredensial**: Menggunakan nilai `ADMIN_USER` dan `ADMIN_PASSWORD` yang Anda atur di `.env`.
+- **Fitur CMS**:
+  - Ganti poster Hero, Wireless FWA (atas/tengah/bawah), Promo Diskon, hingga Thumbnail Video.
+  - Mendukung upload file gambar langsung (disimpan di `public/uploads/posters/`) atau menggunakan link URL gambar.
+  - Tombol reset untuk mengembalikan gambar ke poster default bawaan.
 
 ### 3. Jalankan Docker Compose
 ```bash

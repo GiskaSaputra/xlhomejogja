@@ -14,7 +14,7 @@
         <div class="grid md:grid-cols-2 gap-8">
             <div class="relative rounded-[32px] overflow-hidden">
                 <video class="w-full aspect-[9/16] object-cover relative z-20" controls playsinline preload="metadata"
-                       poster="https://www.image2url.com/r2/default/images/1792124537502-e932d28b-c9c8-4558-80c9-16a95b15faaf.png">
+                       poster="{{ \App\Services\PosterService::get('video_1_poster') }}">
                     <source src="https://files.catbox.moe/zh4n91.mp4" type="video/mp4">
                 </video>
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-30"></div>
@@ -22,7 +22,7 @@
 
             <div class="relative rounded-[32px] overflow-hidden">
                 <video class="w-full aspect-[9/16] object-cover relative z-20" controls playsinline preload="metadata"
-                       poster="https://www.image2url.com/r2/default/images/1779509062481-155fed39-1894-4f23-9b0b-e19a41ba7d12.png">
+                       poster="{{ \App\Services\PosterService::get('video_2_poster') }}">
                     <source src="https://files.catbox.moe/g4dulh.mp4" type="video/mp4">
                 </video>
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-30"></div>

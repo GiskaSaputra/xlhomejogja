@@ -13,9 +13,10 @@ if ! grep -q "APP_KEY=base64:" /var/www/.env; then
     php artisan key:generate --force
 fi
 
-# Set proper permissions for storage and bootstrap/cache
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Ensure uploads and storage directories exist with proper permissions
+mkdir -p /var/www/public/uploads/posters /var/www/storage/app
+chown -R www-data:www-data /var/www/public/uploads /var/www/storage /var/www/bootstrap/cache
+chmod -R 775 /var/www/public/uploads /var/www/storage /var/www/bootstrap/cache
 
 # Run migrations if database is configured
 php artisan migrate --force --isolated || true

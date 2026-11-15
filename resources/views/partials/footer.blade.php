@@ -35,7 +35,10 @@
         </div>
 
         <div class="mt-14 pt-6 border-t border-white/10 text-center">
-            <p class="text-slate-400 text-sm">&copy; {{ date('Y') }} XL SATU Promo — All Rights Reserved</p>
+            <p class="text-slate-400 text-sm">
+                &copy; {{ date('Y') }} XL SATU Promo — All Rights Reserved &bull; 
+                <a href="{{ route('admin.login') }}" class="hover:text-cyan-400 transition ml-1 opacity-70 hover:opacity-100">Panel CMS</a>
+            </p>
         </div>
     </div>
 </footer>

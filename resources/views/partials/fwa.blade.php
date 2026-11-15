@@ -8,7 +8,7 @@
             <p>Paket Internet Jaringan 5G FWA ( Fixed Wireless Acces) jaringan tanpa kabel</p>
         </div>
 
-        <img src="https://www.image2url.com/r2/default/images/1786349065971-dd18e28f-ff6e-43b8-baa7-f78936da8f3b.png" alt="Banner FWA" class="w-full h-auto">
+        <img src="{{ \App\Services\PosterService::get('fwa_banner_1') }}" alt="Banner FWA" class="w-full h-auto">
 
         {{-- FWA Bulanan 100 Mbps --}}
         <div class="fwa-monthly-card">
@@ -54,8 +54,8 @@
             </div>
         </div>
 
-        <img src="https://www.image2url.com/r2/default/images/1791428508299-0056174c-c8b3-4608-a99e-dad4bd50d7fb.jpg" alt="Banner" class="w-full h-auto">
-        <img src="https://www.image2url.com/r2/default/images/1785995744396-ba8ebcfa-36ac-420f-9517-2dab859c97d1.png" alt="" class="w-full h-auto">
+        <img src="{{ \App\Services\PosterService::get('fwa_banner_2') }}" alt="Banner" class="w-full h-auto">
+        <img src="{{ \App\Services\PosterService::get('fwa_banner_3') }}" alt="" class="w-full h-auto">
         <br>
 
         <div class="fwa-grid">
@@ -107,4 +107,4 @@
     </div>
 </section>
 
-<img src="https://www.image2url.com/r2/default/images/1791428815463-6e324c8e-8ea3-4e76-87c8-07288507919d.jpg" alt="Banner Promo" class="w-full h-auto">
+<img src="{{ \App\Services\PosterService::get('fwa_banner_4') }}" alt="Banner Promo" class="w-full h-auto">

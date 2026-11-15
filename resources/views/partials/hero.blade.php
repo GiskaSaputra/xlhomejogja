@@ -18,4 +18,4 @@
     </div>
 </section>
 
-<img src="https://cdn.phototourl.com/member/2026-10-16-7d057154-6e53-4383-9a8f-bc284ca9d97e.png" alt="Banner Promo" class="w-full h-auto">
+<img src="{{ \App\Services\PosterService::get('hero_banner') }}" alt="Banner Promo" class="w-full h-auto">
